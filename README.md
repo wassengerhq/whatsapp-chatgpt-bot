@@ -94,10 +94,10 @@ The AI bot will always reply to inbound messages based on the following criteria
 If you have [git](https://git-scm.org) installed, run the following command from the Terminal:
 
 ```bash
-git clone https://github.com/wassenger/whatsapp-chatgpt-bot.git
+git clone https://github.com/wassengerhq/whatsapp-chatgpt-bot.git
 ```
 
-If you don't have `git`, download the project sources [using this link](https://github.com/wassenger/whatsapp-chatgpt-bot/download) and unzip it.
+If you don't have `git`, download the project sources [using this link](https://github.com/wassengerhq/whatsapp-chatgpt-bot/download) and unzip it.
 
 ### Configuration
 
