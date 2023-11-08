@@ -2,7 +2,7 @@
 
 **Turn your WhatsApp number into a ChatGPT-powered AI powerful chatbot in minutes with this tutorial using the [Wassenger API](https://wassenger.com).**
 
-[![Open in Codeflow](https://developer.stackblitz.com/img/open_in_codeflow.svg)](https:///pr.new/wassengerhq/whatsapp-chatbot-bot)
+[![Open in Codeflow](https://developer.stackblitz.com/img/open_in_codeflow.svg)](https:///pr.new/wassengerhq/whatsapp-chatgpt-bot)
 
 Have a powerful AI chatbot running in minutes on your computer or server and easily adjust it to cover you own business use cases.
 
@@ -15,7 +15,7 @@ The chatbot will be able to understand and speak many languages and has been tra
 
 👉 *[Read the blog tutorial here](https://medium.com/@wassenger/build-a-whatsapp-chatgpt-powered-ai-chatbot-for-your-business-595a60eb17da)* 
 
-👉 *[Run the bot program right from your web browser](https:///pr.new/wassengerhq/whatsapp-chatbot-bot)* 🤩 💻
+👉 *[Run the bot program right from your web browser](https:///pr.new/wassengerhq/whatsapp-chatgpt-bot)* 🤩 💻
 
 > 🤩 🤖 [**Wassenger is a complete WhatsApp API cloud solution. Sign up for free and get started in minutes!**](https://wassenger.com)
 
