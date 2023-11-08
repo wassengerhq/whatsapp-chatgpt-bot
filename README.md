@@ -15,7 +15,7 @@ The chatbot will be able to understand and speak many languages and has been tra
 
 👉 *[Read the blog tutorial here](https://medium.com/@wassenger/build-a-whatsapp-chatgpt-powered-ai-chatbot-for-your-business-595a60eb17da)* 
 
-👉 *[Run the bot program right from your web browser without installing any software](https:///pr.new/wassengerhq/whatsapp-chatbot-bot)* 🤩 💻
+👉 *[Run the bot program right from your web browser](https:///pr.new/wassengerhq/whatsapp-chatbot-bot)* 🤩 💻
 
 > 🤩 🤖 [**Wassenger is a complete WhatsApp API cloud solution. Sign up for free and get started in minutes!**](https://wassenger.com)
 
