@@ -35,6 +35,20 @@ Type *human* to talk with a person. The chat will be assigned to an available me
 
 Give it a try! 😁`
 
+// Optional. AI callable functions to be interpreted by the AI
+// Using it you can instruct the AI to inform you to execute arbitrary functions
+// in your code based in order to augment information for a specific user query.
+// For example, you can call an external CRM in order to retrieve, save or validate
+// specific information about the customer, such as email, phone number, user ID, etc.
+// Learn more here: https://platform.openai.com/docs/guides/gpt/function-calling
+const openaiFunctions = [
+  {
+    name: 'getPlanPrices',
+    description: 'Get available plans and prices information available in Wassenger',
+    parameters: { type: 'object', properties: {} }
+  }
+]
+
 // Chatbot config
 export default {
   // Optional. Specify the Wassenger device ID (24 characters hexadecimal length) to be used for the chatbot
@@ -64,13 +78,7 @@ export default {
   // For example, you can call an external CRM in order to retrieve, save or validate
   // specific information about the customer, such as email, phone number, user ID, etc.
   // Learn more here: https://platform.openai.com/docs/guides/gpt/function-calling
-  openaiFunctions: [
-    {
-      name: 'getPlanPrices',
-      description: 'Get available plans and prices information available in Wassenger',
-      parameters: { type: 'object', properties: {} }
-    }
-  ],
+  openaiFunctions,
 
   // Optional. HTTP server TCP port to be used. Defaults to 8080
   port: +env.PORT || 8080,
