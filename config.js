@@ -49,6 +49,36 @@ const openaiFunctions = [
   }
 ]
 
+// Optional. Edit as needed to cover your business use cases.
+// Note the method property name for every function must be equal the openaiFunctions[].name property.
+// Collection of callable function calls used to generate the response to feed the AI model
+// and generate a domain-specific response to the user.
+// Functions may be synchronous or asynchronous.
+// Learn more here: https://platform.openai.com/docs/guides/gpt/function-calling
+const functions = {
+  async getPlanPrices ({ response, data, device, messages }) {
+    const message = [
+      '*Gateway plans: Send only messages + API*',
+      '',
+      '- Gateway Professional: up to 10,000 outbound messages',
+      '- Gateway Business: up to 30,000 outbound messages',
+      '- Gateway Enterprise: unlimited outbound messages',
+      '',
+      '*Platform plans: Send & Receive messages + API + Webhooks + Live Team Chat + CRM + Analytics*',
+      '',
+      '- Platform Professional: up to 30,000 outbound + unlimited inbound messages',
+      '- Platform Business: up to 60,000 outbound + unlimited inbound messages',
+      '- Platform Enterprise: unlimited: unlimited outbound + inbound messages',
+      '',
+      'Each plan is limited to one WhatsApp number. You can purchase multiple plans for multiple numbers.',
+      '',
+      '*Find more information about the different plan prices and features here:*',
+      'https://wassenger.com/#pricing'
+    ].join('\n')
+    return message
+  }
+}
+
 // Chatbot config
 export default {
   // Optional. Specify the Wassenger device ID (24 characters hexadecimal length) to be used for the chatbot
@@ -79,6 +109,14 @@ export default {
   // specific information about the customer, such as email, phone number, user ID, etc.
   // Learn more here: https://platform.openai.com/docs/guides/gpt/function-calling
   openaiFunctions,
+
+  // Optional. Edit as needed to cover your business use cases.
+  // Note the method property name for every function must be equal the openaiFunctions[].name property.
+  // Collection of callable function calls used to generate the response to feed the AI model
+  // and generate a domain-specific response to the user.
+  // Functions may be synchronous or asynchronous.
+  // Learn more here: https://platform.openai.com/docs/guides/gpt/function-calling
+  functions,
 
   // Optional. HTTP server TCP port to be used. Defaults to 8080
   port: +env.PORT || 8080,

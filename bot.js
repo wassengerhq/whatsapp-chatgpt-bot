@@ -156,26 +156,14 @@ export async function processMessage ({ data, device } = {}) {
     const [response] = completion.choices
 
     // If response is a function call, return the custom result
-    if (response.message.function_call && response.message.function_call.name === 'getPlanPrices') {
-      const prices = [
-        '*Gateway plans: Send only messages + API*',
-        '',
-        '- Gateway Professional: up to 10,000 outbound messages',
-        '- Gateway Business: up to 30,000 outbound messages',
-        '- Gateway Enterprise: unlimited outbound messages',
-        '',
-        '*Platform plans: Send & Receive messages + API + Webhooks + Live Team Chat + CRM + Analytics*',
-        '',
-        '- Platform Professional: up to 30,000 outbound + unlimited inbound messages',
-        '- Platform Business: up to 60,000 outbound + unlimited inbound messages',
-        '- Platform Enterprise: unlimited: unlimited outbound + inbound messages',
-        '',
-        'Each plan is limited to one WhatsApp number. You can purchase multiple plans for multiple numbers.',
-        '',
-        '*Find more information about the different plan prices and features here:*',
-        'https://wassenger.com/#pricing'
-      ].join('\n')
-      return await reply({ message: prices })
+    if (response.message.function_call && response.message.function_call.name) {
+      const func = config.functions[response.message.function_call.name]
+      if (typeof func === 'function') {
+        const message = await func({ response, data, device, messages })
+        await reply({ message })
+      } else {
+        console.error('[warning] missing function call in config.functions', response.message.function_call.name)
+      }
     }
 
     // Otherwise forward the AI generate message
