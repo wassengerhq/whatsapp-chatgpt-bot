@@ -13,6 +13,8 @@ Also, the AI bot will be conversation-aware based on the previous messages you h
 
 The chatbot will be able to understand and speak many languages and has been trained to behave like a customer support virtual assistant specialized in certain tasks.
 
+You can also easily augment domain-specific knowledge about your business in real-time [by using function actions](/config.js#L38-L80) that let the AI bot arbitrarily communicate with your code functions or remote APIs to retrieve and feed the AI with custom information.
+
 👉 *[Read the blog tutorial here](https://medium.com/@wassenger/build-a-whatsapp-chatgpt-powered-ai-chatbot-for-your-business-595a60eb17da)* 
 
 👉 *[Run the bot program right from your web browser](https:///pr.new/wassengerhq/whatsapp-chatgpt-bot)* 🤩 💻
