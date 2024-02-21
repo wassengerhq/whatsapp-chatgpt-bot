@@ -15,7 +15,7 @@ async function createTunnel () {
       const tunnel = await ngrok.connect({
         addr: config.port,
         authtoken: config.ngrokToken,
-        path => config.ngrokPath || path
+        path: => config.ngrokPath || path
       })
       console.log(`Ngrok tunnel created: ${tunnel}`)
       return tunnel
