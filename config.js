@@ -136,6 +136,9 @@ export default {
   // Learn how to obtain the auth token: https://ngrok.com/docs/agent/#authtokens
   ngrokToken: env.NGROK_TOKEN,
 
+  // Optional. Full path to the ngrok binary.
+  ngrokPath: env.NGROK_PATH,
+
   // Set one or multiple labels on chatbot-managed chats
   setLabelsOnBotChats: ['bot'],
 
