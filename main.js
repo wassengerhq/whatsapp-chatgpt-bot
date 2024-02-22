@@ -9,13 +9,19 @@ const { exit } = actions
 async function createTunnel () {
   let retries = 3
 
+  try {
+    await ngrok.upgradeConfig({ relocate: false })
+  } catch (err) {
+    console.error('[warning] Failed to upgrade Ngrok config:', err.message)
+  }
+
   while (retries) {
     retries -= 1
     try {
       const tunnel = await ngrok.connect({
         addr: config.port,
         authtoken: config.ngrokToken,
-        path => config.ngrokPath || path
+        path: () => config.ngrokPath || path
       })
       console.log(`Ngrok tunnel created: ${tunnel}`)
       return tunnel
