@@ -9,6 +9,12 @@ const { exit } = actions
 async function createTunnel () {
   let retries = 3
 
+  try {
+    await ngrok.upgradeConfig({ relocate: false })
+  } catch (err) {
+    console.error('[warning] Failed to upgrade Ngrok config:', err.message)
+  }
+
   while (retries) {
     retries -= 1
     try {
