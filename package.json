@@ -1,6 +1,7 @@
 {
   "name": "whatsapp-chatgpt-bot-demo",
   "version": "1.0.0",
+  "private": true,
   "license": "MIT",
   "engine": {
     "node": ">=16"
