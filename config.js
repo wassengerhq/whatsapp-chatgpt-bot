@@ -97,10 +97,10 @@ export default {
 
   // Required. Set the OpenAI model to use.
   // You can use a pre-existing model or create your fine-tuned model.
-  // Default model (fastest and cheapest): gpt-3.5-turbo-0613
-  // Newest model: gpt-4-0125-preview
+  // Default model (fastest and cheapest): gpt-3.5-turbo-0125
+  // Newest model: gpt-4-1106-preview
   // For customized fine-tuned models, see: https://platform.openai.com/docs/guides/fine-tuning
-  openaiModel: env.OPENAI_MODEL || 'gpt-3.5-turbo-0613',
+  openaiModel: env.OPENAI_MODEL || 'gpt-3.5-turbo-0125',
 
   // Optional. AI callable functions to be interpreted by the AI
   // Using it you can instruct the AI to inform you to execute arbitrary functions
