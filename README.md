@@ -17,6 +17,8 @@ You can also easily augment domain-specific knowledge about your business in rea
 
 👉 *[Read the blog tutorial here](https://medium.com/@wassenger/build-a-whatsapp-chatgpt-powered-ai-chatbot-for-your-business-595a60eb17da)* 
 
+👉 *[Watch the video tutorial here](https://www.youtube.com/watch?v=v6hi4TlYnbw)* 🤩 ▶️
+
 👉 *[Run the bot program right from your web browser](https:///pr.new/wassengerhq/whatsapp-chatgpt-bot)* 🤩 💻
 
 > 🤩 🤖 [**Wassenger is a complete WhatsApp API cloud solution. Sign up for free and get started in minutes!**](https://wassenger.com)
