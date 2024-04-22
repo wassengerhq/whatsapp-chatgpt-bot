@@ -79,6 +79,7 @@ The AI bot will always reply to inbound messages based on the following criteria
 - [Node.js](https://nodejs.org) >= v16 ([download it here](https://nodejs.org/en/download))
 - [WhatsApp](https://whatsapp.com) Personal or Business number
 - [OpenAI API key](https://platform.openai.com/account/api-keys) - [Sign up for free](https://platform.openai.com/signup)
+- [Add OpenAI credits](https://help.openai.com/en/articles/8264644-what-is-prepaid-billing): you may be required to prepaid OpenAI in order to use the OpenAI API.
 - [Wassenger](https://wassenger.com) API key - [Sign up for free](https://app.wassenger.com/register)
 - [Connect your WhatsApp](https://app.wassenger.com/create) Personal or Business number to Wassenger
 - [Sign up for a Ngrok free account](https://dashboard.ngrok.com/signup) to create a webhook tunnel (only if running the program on your local computer)
@@ -144,6 +145,8 @@ Enter your [OpenAI](https://openai.com) API key
 // Obtain your API key here: https://platform.openai.com/account/api-keys
 openaiKey: env.OPENAI_API_KEY || 'ENTER OPENAI API KEY HERE',
 ```
+
+> **Important**: in order to use OpenAI API, [you may be required to add prepaid credits](https://help.openai.com/en/articles/8264644-what-is-prepaid-billing) in your OpenAI account due to the new payment policy.
 
 #### Set your Ngrok token (optional)
 
@@ -246,6 +249,12 @@ WEBHOOK_URL=https://bot.company.com:8080/webhook node main
 Yes! You can provide customized instructions to the AI to determine the bot behavior, identity and more.
 
 To set your instructions, enter the text in `config.js` > `botInstructions`.
+
+#### The program returns an OpenAI error: what should I do?
+
+Because of the new payment policy by OpenAI, in order to use OpenAI API, [you may be required to add prepaid credits](https://help.openai.com/en/articles/8264644-what-is-prepaid-billing) in your OpenAI account.
+
+You can prepaid a small amount in order to use the API like $5 or $10.
 
 #### Can I instruct the AI not to reply about unrelated topics?
 
