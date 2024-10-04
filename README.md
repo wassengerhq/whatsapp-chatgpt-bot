@@ -15,7 +15,7 @@ The chatbot will be able to understand and speak many languages and has been tra
 
 You can also easily augment domain-specific knowledge about your business in real-time [by using function actions](/config.js#L38-L80) that let the AI bot arbitrarily communicate with your code functions or remote APIs to retrieve and feed the AI with custom information.
 
-👉 *[Read the blog tutorial here](https://medium.com/@wassenger/build-a-whatsapp-chatgpt-powered-ai-chatbot-for-your-business-595a60eb17da)* 
+👉 *[Read the blog tutorial here](https://medium.com/@wassenger/build-a-whatsapp-chatgpt-powered-ai-chatbot-for-your-business-595a60eb17da)*
 
 👉 *[Run the bot program right from your web browser](https:///pr.new/wassengerhq/whatsapp-chatgpt-bot)* 🤩 💻
 
@@ -47,7 +47,7 @@ You can also easily augment domain-specific knowledge about your business in rea
 
 1. Starts a web service that automatically connects to the Wassenger API and your WhatsApp number
 2. Creates a tunnel using Ngrok to be able to receive Webhook events on your computer (or you can use a dedicated webhook URL instead if you run the bot program in your cloud server).
-3. Registers the webhook endoint automatically in order to receive incoming messages.
+3. Registers the webhook endpoint automatically in order to receive incoming messages.
 4. Processes and replies to messages received using a [ChatGPT-powered AI model](https://openai.com/chatgpt) trained with custom instructions.
 5. You can start playing with the AI bot by sending messages to the Wassenger connected WhatsApp number.
 
@@ -210,22 +210,32 @@ Give it a try! 😁`
 
 ### Usage
 
-Run the bot program:
+Run the bot:
 ```bash
 node main
 ```
 
-Run the bot program on a custom port:
+Or using `npm`:
+```bash
+npm run main
+```
+
+Run the bot on a custom port:
 ```
 PORT=80 node main
 ```
 
-Run the bot program for a specific Wassenger connected device:
+Run the bot for a specific Wassenger connected device:
 ```
 DEVICE=WHATSAPP_DEVICE_ID node main
 ```
 
-Run the bot program in production mode:
+Run the bot in [local development mode](https://nodemon.io/) with auto-reload on changes:
+```
+npm run dev
+```
+
+Run the bot in production mode:
 ```
 NODE_ENV=production node main
 ```

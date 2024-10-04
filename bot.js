@@ -10,12 +10,12 @@ const ai = new OpenAI({ apiKey: config.openaiKey })
 function canReply ({ data, device }) {
   const { chat } = data
 
-  // Skip if chat is already assigned to an team member
-  if (chat.owner && chat.owner.agent) {
+  // Skip chat if already assigned to a team member
+  if (chat.owner?.agent) {
     return false
   }
 
-  // Ignore messages from group chats
+  // Skip messages from group chats and channels
   if (chat.type !== 'chat') {
     return false
   }
@@ -43,13 +43,13 @@ function canReply ({ data, device }) {
     }
   }
 
-  // Skip replying chats that were archived, when applicable
-  if (config.skipArchivedChats && (chat.status === 'archived' || chat.waStatus === 'archived')) {
+  // Skip replying to blocked chats
+  if (chat.status === 'banned' || chat.waStatus === 'banned') {
     return false
   }
 
-  // Always ignore replying to banned chats/contacts
-  if ((chat.status === 'banned' || chat.waStatus === 'banned  ')) {
+  // Skip replying chats that were archived, when applicable
+  if (config.skipArchivedChats && (chat.status === 'archived' || chat.waStatus === 'archived')) {
     return false
   }
 
@@ -85,11 +85,19 @@ function replyMessage ({ data, device }) {
   }
 }
 
+function parseArguments (json) {
+  try {
+    return JSON.parse(json || '{}')
+  } catch (err) {
+    return {}
+  }
+}
+
 // Process message received from the user on every new inbound webhook event
 export async function processMessage ({ data, device } = {}) {
   // Can reply to this message?
   if (!canReply({ data, device })) {
-    return console.log('[info] Skip message due to chat already assigned or not eligible to reply:', data.fromNumber, data.date, data.body)
+    return console.log('[info] Skip message - chat is not eligible to reply due to active filters:', data.fromNumber, data.date, data.body)
   }
 
   const reply = replyMessage({ data, device })
@@ -142,13 +150,17 @@ export async function processMessage ({ data, device } = {}) {
     { role: 'user', content: body }
   ]
 
+  const tools = (config.functions || []).filter(x => x && x.name).map(({ name, description, parameters, strict }) => (
+    { type: 'function', function: { name, description, parameters, strict } }
+  ))
+
   // Generate response using AI
   const completion = await ai.chat.completions.create({
+    tools,
     messages,
     temperature: 0.2,
     model: config.openaiModel,
-    user: `${device.id}_${chat.id}`,
-    functions: config.openaiFunctions || []
+    user: `${device.id}_${chat.id}`
   })
 
   // Reply with the AI generated message
@@ -156,14 +168,22 @@ export async function processMessage ({ data, device } = {}) {
     const [response] = completion.choices
 
     // If response is a function call, return the custom result
-    if (response.message.function_call && response.message.function_call.name) {
-      const func = config.functions[response.message.function_call.name]
-      if (typeof func === 'function') {
-        const message = await func({ response, data, device, messages })
-        await reply({ message })
-      } else {
-        console.error('[warning] missing function call in config.functions', response.message.function_call.name)
+    if (response.message?.tool_calls?.length) {
+      let message = ''
+
+      // Call tool functions triggerd by the AI
+      const calls = response.message.tool_calls.filter(x => x.id && x.type === 'function')
+      for (const call of calls) {
+        const func = config.functions.find(x => x.name === call.function.name)
+        if (func && typeof func.run === 'function') {
+          const parameters = parseArguments(call.function.arguments)
+          console.log('[info] run function:', call.function.name, parameters)
+          message = await func.run({ message, parameters, response, data, device, messages })
+        } else if (!func) {
+          console.error('[warning] missing function call in config.functions', call.function.name)
+        }
       }
+      await reply({ message })
     }
 
     // Otherwise forward the AI generate message

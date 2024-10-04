@@ -36,48 +36,68 @@ Type *human* to talk with a person. The chat will be assigned to an available me
 Give it a try! 😁`
 
 // Optional. AI callable functions to be interpreted by the AI
+// Edit as needed to cover your business use cases.
 // Using it you can instruct the AI to inform you to execute arbitrary functions
 // in your code based in order to augment information for a specific user query.
 // For example, you can call an external CRM in order to retrieve, save or validate
 // specific information about the customer, such as email, phone number, user ID, etc.
-// Learn more here: https://platform.openai.com/docs/guides/gpt/function-calling
-const openaiFunctions = [
+// Learn more here: https://platform.openai.com/docs/guides/function-calling
+const functions = [
   {
     name: 'getPlanPrices',
     description: 'Get available plans and prices information available in Wassenger',
-    parameters: { type: 'object', properties: {} }
+    parameters: { type: 'object', properties: {} },
+    // Function implementation that will be executed when the AI requires to call this function
+    // The function must return a string with the information to be sent back to the AI for the response generation
+    // You can also return a JSON or a prompt message instructing the AI how to respond to a user
+    // Functions may be synchronous or asynchronous.
+    //
+    // The bot will inject the following parameters:
+    // - parameters: function parameters provided by the AI when the function has parameters defined
+    // - response: AI generated response object, useful to evaluate the AI response and take actions
+    // - data: webhook event context, useful to access the last user message, chat and contact information
+    // - device: WhatsApp number device information provided the by Wassenger API
+    // - messages: an list of previous messages in the same user chat
+    // - message: functions call chain previous response message, useful when multiple functions are called from the same AI response
+    run: async ({ parameters, response, data, device, messages, message }) => {
+      // console.log('=> data:', response)
+      // console.log('=> response:', response)
+      const reply = [
+        '*Send & Receive messages + API + Webhooks + Team Chat + Campaigns + CRM + Analytics*',
+        '',
+        '- Platform Professional: 30,000 messages + unlimited inbound messages + 10 campaigns / month',
+        '- Platform Business: 60,000 messages + unlimited inbound messages + 20 campaigns / month',
+        '- Platform Enterprise: unlimited messages + 30 campaigns',
+        '',
+        'Each plan is limited to one WhatsApp number. You can purchase multiple plans if you have multiple numbers.',
+        '',
+        '*Find more information about the different plan prices and features here:*',
+        'https://wassenger.com/#pricing'
+      ].join('\n')
+      return reply
+    },
+  },
+  {
+    name: 'loadUserInformation',
+    description: 'Find user name and email from the CRM',
+    parameters: {
+      type: 'object',
+      properties: {}
+    },
+    run: async ({ parameters, response, data, device, messages, message }) => {
+      // You may call an API here
+      const reply = 'I am sorry, I am not able to access the CRM at the moment. Please try again later.'
+      return reply
+    }
+  },
+  {
+    name: 'currentDateAndTime',
+    description: 'What is the current date and time',
+    run: async ({ parameters, response, data, device, messages, message }) => {
+      return new Date().toLocaleString()
+    }
   }
 ]
-
-// Optional. Edit as needed to cover your business use cases.
-// Note the method property name for every function must be equal the openaiFunctions[].name property.
-// Collection of callable function calls used to generate the response to feed the AI model
-// and generate a domain-specific response to the user.
-// Functions may be synchronous or asynchronous.
-// Learn more here: https://platform.openai.com/docs/guides/gpt/function-calling
-const functions = {
-  async getPlanPrices ({ response, data, device, messages }) {
-    const message = [
-      '*Gateway plans: Send only messages + API*',
-      '',
-      '- Gateway Professional: up to 10,000 outbound messages',
-      '- Gateway Business: up to 30,000 outbound messages',
-      '- Gateway Enterprise: unlimited outbound messages',
-      '',
-      '*Platform plans: Send & Receive messages + API + Webhooks + Live Team Chat + CRM + Analytics*',
-      '',
-      '- Platform Professional: up to 30,000 outbound + unlimited inbound messages',
-      '- Platform Business: up to 60,000 outbound + unlimited inbound messages',
-      '- Platform Enterprise: unlimited: unlimited outbound + inbound messages',
-      '',
-      'Each plan is limited to one WhatsApp number. You can purchase multiple plans for multiple numbers.',
-      '',
-      '*Find more information about the different plan prices and features here:*',
-      'https://wassenger.com/#pricing'
-    ].join('\n')
-    return message
-  }
-}
 
 // Chatbot config
 export default {
@@ -100,21 +120,13 @@ export default {
   // Default model (fastest and cheapest): gpt-3.5-turbo-0125
   // Newest model: gpt-4-1106-preview
   // For customized fine-tuned models, see: https://platform.openai.com/docs/guides/fine-tuning
-  openaiModel: env.OPENAI_MODEL || 'gpt-3.5-turbo-0125',
+  openaiModel: env.OPENAI_MODEL || 'gpt-4o', // 'gpt-3.5-turbo-0125',
 
   // Optional. AI callable functions to be interpreted by the AI
   // Using it you can instruct the AI to inform you to execute arbitrary functions
   // in your code based in order to augment information for a specific user query.
   // For example, you can call an external CRM in order to retrieve, save or validate
   // specific information about the customer, such as email, phone number, user ID, etc.
-  // Learn more here: https://platform.openai.com/docs/guides/gpt/function-calling
-  openaiFunctions,
-
-  // Optional. Edit as needed to cover your business use cases.
-  // Note the method property name for every function must be equal the openaiFunctions[].name property.
-  // Collection of callable function calls used to generate the response to feed the AI model
-  // and generate a domain-specific response to the user.
-  // Functions may be synchronous or asynchronous.
   // Learn more here: https://platform.openai.com/docs/guides/gpt/function-calling
   functions,
 
@@ -153,10 +165,12 @@ export default {
 
   // Optional. Ignore processing messages sent by one of the following numbers
   // Important: the phone number must be in E164 format with no spaces or symbols
+  // Example number: 1234567890
   numbersBlacklist: ['1234567890'],
 
   // Optional. Only process messages one of the the given phone numbers
   // Important: the phone number must be in E164 format with no spaces or symbols
+  // Example number: 1234567890
   numbersWhitelist: [],
 
   // Skip chats that were archived in WhatsApp

@@ -52,6 +52,24 @@ async function devServer () {
   })
 }
 
+const loadWhatsAppDevice = async () => {
+  try {
+    const device = await actions.loadDevice()
+    if (!device || device.status !== 'operative') {
+      return exit('No active WhatsApp numbers in your account. Please connect a WhatsApp number in your Wassenger account:\nhttps://app.wassenger.com/create')
+    }
+    return device
+  } catch (err) {
+    if (err.response?.status === 403) {
+      return exit('Unauthorized Wassenger API key: please make sure you are correctly setting the API token, obtain your API key here:\nhttps://app.wassenger.com/developers/apikeys')
+    }
+    if (err.response?.status === 404) {
+      return exit('No active WhatsApp numbers in your account. Please connect a WhatsApp number in your Wassenger account:\nhttps://app.wassenger.com/create')
+    }
+    return exit('Failed to load WhatsApp number:', err.message)
+  }
+}
+
 // Initialize chatbot server
 async function main () {
   // API key must be provided
@@ -70,7 +88,7 @@ async function main () {
   }
 
   // Find a WhatsApp number connected to the Wassenger API
-  const device = await actions.loadDevice()
+  const device = await loadWhatsAppDevice()
   if (!device) {
     return exit('No active WhatsApp numbers in your account. Please connect a WhatsApp number in your Wassenger account:\nhttps://app.wassenger.com/create')
   }
@@ -126,5 +144,5 @@ async function main () {
 }
 
 main().catch(err => {
-  exit('Failed to start chatbot server:', err)
+  exit('Failed to start chatbot server:', err.message)
 })
