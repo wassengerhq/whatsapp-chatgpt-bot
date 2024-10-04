@@ -23,10 +23,6 @@ You can also easily augment domain-specific knowledge about your business in rea
 
 > 🤩 🤖 [**Wassenger is a complete WhatsApp API cloud solution. Sign up for free and get started in minutes!**](https://wassenger.com)
 
-<a href="https://wassenger.com">
- <img src="https://wassenger.com/images/screenshots/main-chat.webp" width="100%" style="box-shadow: 0 0.5rem 1rem rgb(0 0 0 / 10%) !important"/>
-</a>
-
 ### Contents
 
 - [How it works](#how-it-works)
@@ -40,6 +36,10 @@ You can also easily augment domain-specific knowledge about your business in rea
 - [Customization](#customization)
 - [Usage](#usage)
 - [Questions](#questions)
+
+<a href="https://wassenger.com">
+ <img src="https://wassenger.com/images/screenshots/main-chat.webp" width="100%" style="box-shadow: 0 0.5rem 1rem rgb(0 0 0 / 10%) !important"/>
+</a>
 
 ### Demo
 
