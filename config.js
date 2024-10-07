@@ -1,4 +1,4 @@
-import functions from './functions'
+import functions from './functions.js'
 const { env } = process
 
 // Default message when the user sends an unknown message.
