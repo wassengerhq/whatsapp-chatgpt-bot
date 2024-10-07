@@ -62,12 +62,21 @@ function replyMessage ({ data, device }) {
   return async ({ message, ...params }) => {
     const { phone } = data.chat.contact
 
-    await actions.sendMessage({
+    const msg = await actions.sendMessage({
       phone,
       device: device.id,
       message,
       ...params
     })
+
+    // Store sent message in chat history
+    state[data.chat.id] = state[data.chat.id] || {}
+    state[data.chat.id][msg.waId] = {
+      id: msg.waId,
+      flow: 'outbound',
+      date: msg.createdAt,
+      body: message
+    }
 
     // Add bot-managed chat labels, if required
     if (config.setLabelsOnBotChats.length) {
@@ -134,28 +143,39 @@ export async function processMessage ({ data, device } = {}) {
     await actions.pullChatMessages({ data, device })
   }
 
+  // Chat messages history
+  const chatMessages = state[data.chat.id] = state[data.chat.id] || {}
+
   // Compose chat previous messages to context awareness better AI responses
-  const previousMessages = Object.values(state[data.chat.id] || {})
-    .reverse()
+  const previousMessages = Object.values(chatMessages)
+    .sort((a, b) => +new Date(b.date) - +new Date(a.date))
     .slice(0, 40)
+    .reverse()
     .map(message => ({
-      role: message.flow === 'inbound' ? 'user' : 'assistant',
+      role: message.flow === 'inbound' ? 'user' : (message.role || 'assistant'),
       content: message.body
     }))
     .filter(message => message.content).slice(-20)
 
   const messages = [
     { role: 'system', content: config.botInstructions },
-    ...previousMessages,
-    { role: 'user', content: body }
+    ...previousMessages
   ]
 
+  const lastMessage = messages[messages.length - 1]
+  if (lastMessage.role !== 'user' || lastMessage.content !== body) {
+    messages.push({ role: 'user', content: body })
+  }
+
+  console.log('=> messages history:', messages)
+
+  // Add tool functions to the AI model, if available
   const tools = (config.functions || []).filter(x => x && x.name).map(({ name, description, parameters, strict }) => (
     { type: 'function', function: { name, description, parameters, strict } }
   ))
 
   // Generate response using AI
-  const completion = await ai.chat.completions.create({
+  let completion = await ai.chat.completions.create({
     tools,
     messages,
     temperature: 0.2,
@@ -163,31 +183,74 @@ export async function processMessage ({ data, device } = {}) {
     user: `${device.id}_${chat.id}`
   })
 
-  // Reply with the AI generated message
-  if (completion.choices && completion.choices.length) {
-    const [response] = completion.choices
+  // Reply with unknown / default response on invalid/error
+  if (!completion.choices?.length) {
+    const unknownCommand = `${config.unknownCommandMessage}\n\n${config.defaultMessage}`
+    return await reply({ message: unknownCommand })
+  }
+
+  // Process tool function calls, if required by the AI model
+  const maxRecursirveCalls = 10
+  let [response] = completion.choices
+  let count = 0
+  while (response?.message?.tool_calls?.length && count < maxRecursirveCalls) {
+    count += 1
 
     // If response is a function call, return the custom result
-    if (response.message?.tool_calls?.length) {
-      let message = ''
+    let responses = []
 
-      // Call tool functions triggerd by the AI
-      const calls = response.message.tool_calls.filter(x => x.id && x.type === 'function')
-      for (const call of calls) {
-        const func = config.functions.find(x => x.name === call.function.name)
-        if (func && typeof func.run === 'function') {
-          const parameters = parseArguments(call.function.arguments)
-          console.log('[info] run function:', call.function.name, parameters)
-          message = await func.run({ message, parameters, response, data, device, messages })
-        } else if (!func) {
-          console.error('[warning] missing function call in config.functions', call.function.name)
+    // Store tool calls in history
+    messages.push({ role: 'assistant', tool_calls: response.message.tool_calls })
+
+    // Call tool functions triggerd by the AI
+    const calls = response.message.tool_calls.filter(x => x.id && x.type === 'function')
+    for (const call of calls) {
+      const func = config.functions.find(x => x.name === call.function.name)
+      if (func && typeof func.run === 'function') {
+        const parameters = parseArguments(call.function.arguments)
+        console.log('[info] run function:', call.function.name, parameters)
+
+        // Run the function and get the response message
+        const message = await func.run({ parameters, response, data, device, messages })
+        if (message) {
+          responses.push({ role: 'tool', content: message, tool_call_id: call.id })
         }
+      } else if (!func) {
+        console.error('[warning] missing function call in config.functions', call.function.name)
       }
-      await reply({ message })
     }
 
-    // Otherwise forward the AI generate message
-    return await reply({ message: response.message.content || config.unknownCommandMessage })
+    if (!responses.length) {
+      break
+    }
+
+    // Add tool responses to the chat history
+    messages.push(...responses)
+
+    // Generate a new response based on the tool functions responses
+    completion = await ai.chat.completions.create({
+      tools,
+      messages,
+      temperature: 0.2,
+      model: config.openaiModel,
+      user: `${device.id}_${chat.id}`
+    })
+    console.log('===> completion:', JSON.stringify(completion.choices, null, 2))
+
+    // Reply with unknown / default response on invalid/error
+    if (!completion.choices?.length) {
+      break
+    }
+    // Reply with unknown / default response on invalid/error
+    response = completion.choices[0]
+    if (!response || response.finish_reason === 'stop') {
+      break
+    }
+  }
+
+  // Reply with the AI generated response
+  if (completion.choices?.length) {
+    return await reply({ message: response?.message?.content || config.unknownCommandMessage })
   }
 
   // Unknown default response

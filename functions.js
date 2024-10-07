@@ -23,8 +23,7 @@ const functions = [
     // - data: webhook event context, useful to access the last user message, chat and contact information
     // - device: WhatsApp number device information provided the by Wassenger API
     // - messages: an list of previous messages in the same user chat
-    // - message: functions call chain previous response message, useful when multiple functions are called from the same AI response
-    run: async ({ parameters, response, data, device, messages, message }) => {
+    run: async ({ parameters, response, data, device, messages }) => {
       // console.log('=> data:', response)
       // console.log('=> response:', response)
       const reply = [
@@ -51,7 +50,7 @@ const functions = [
       type: 'object',
       properties: {}
     },
-    run: async ({ parameters, response, data, device, messages, message }) => {
+    run: async ({ parameters, response, data, device, messages }) => {
       // You may call an remote API and run a database query
       const reply = 'I am sorry, I am not able to access the CRM at the moment. Please try again later.'
       return reply
@@ -69,18 +68,24 @@ const functions = [
       },
       required: ['date']
     },
-    run: async ({ parameters, response, data, device, messages, message }) => {
+    run: async ({ parameters, response, data, device, messages }) => {
       console.log('=> verifyMeetingAvaiability call parameters:', parameters)
-      // Make an API call to verify the date and time availability and return the confirmation or rejection message
-      const available = Math.random() < 0.7
-      return available ? 'Available' : 'Not available'
+      // Example: you can make an API call to verify the date and time availability and return the confirmation or rejection message
+      const date = new Date(parameters.date)
+      if (date.getUTCDay() > 5) {
+        return 'Not available on weekends'
+      }
+      if (date.getHours() < 9 || date.getHours() > 17) {
+        return 'Not available outside business hours: 9 am to 5 pm'
+      }
+      return 'Available'
     }
   },
 
   // Sample function to determine the current date and time
   {
     name: 'bookSalesMeeting',
-    description: 'Book a sales meeting with the customer on a specific date and time',
+    description: 'Book a sales or demo meeting with the customer on a specific date and time',
     parameters: {
       type: 'object',
       properties: {
@@ -88,7 +93,7 @@ const functions = [
       },
       required: ['date']
     },
-    run: async ({ parameters, response, data, device, messages, message }) => {
+    run: async ({ parameters, response, data, device, messages }) => {
       console.log('=> bookSalesMeeting call parameters:', parameters)
       // Make an API call to book the meeting and return the confirmation or rejection message
       return 'Meeting booked successfully. You will receive a confirmation email shortly.'
@@ -99,7 +104,7 @@ const functions = [
   {
     name: 'currentDateAndTime',
     description: 'What is the current date and time',
-    run: async ({ parameters, response, data, device, messages, message }) => {
+    run: async ({ parameters, response, data, device, messages }) => {
       return new Date().toLocaleString()
     }
   }

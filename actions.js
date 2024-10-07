@@ -221,7 +221,7 @@ export async function assignChatToAgent ({ data, device }) {
 
 export async function pullChatMessages ({ data, device }) {
   try {
-    const url = `${API_URL}/chat/${device.id}/messages/?chat=${data.chat.id}&limit=25`
+    const url = `${API_URL}/chat/${device.id}/messages/?chat=${data.chat.id}&limit=20`
     const res = await axios.get(url, { headers: { Authorization: config.apiKey } })
     state[data.chat.id] = res.data.reduce((acc, message) => {
       acc[message.id] = message
