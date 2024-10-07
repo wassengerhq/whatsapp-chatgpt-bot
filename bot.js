@@ -166,8 +166,7 @@ export async function processMessage ({ data, device } = {}) {
   if (lastMessage.role !== 'user' || lastMessage.content !== body) {
     messages.push({ role: 'user', content: body })
   }
-
-  console.log('=> messages history:', messages)
+  // console.log('=> messages history:', data.chat.id, messages)
 
   // Add tool functions to the AI model, if available
   const tools = (config.functions || []).filter(x => x && x.name).map(({ name, description, parameters, strict }) => (
@@ -235,7 +234,6 @@ export async function processMessage ({ data, device } = {}) {
       model: config.openaiModel,
       user: `${device.id}_${chat.id}`
     })
-    console.log('===> completion:', JSON.stringify(completion.choices, null, 2))
 
     // Reply with unknown / default response on invalid/error
     if (!completion.choices?.length) {
