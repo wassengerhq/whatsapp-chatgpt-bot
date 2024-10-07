@@ -34,6 +34,7 @@ You can also easily augment domain-specific knowledge about your business in rea
 - [Installation](#installation)
 - [Configuration](#configuration)
 - [Customization](#customization)
+- [External data loading](#external-data-loading)
 - [Usage](#usage)
 - [Questions](#questions)
 
@@ -90,6 +91,7 @@ The AI bot will always reply to inbound messages based on the following criteria
 \
  |- bot.js -> the bot source code in a single file
  |- config.js -> configuration file to customize credentials and bot behavior
+ |- functions.js -> Function call definitions for retrieval-augmented information (RAG)
  |- actions.js -> functions to perform actions through the Wassenger API
  |- server.js -> initializes the web server to process webhook events
  |- main.js -> initializes the bot server and creates the webhook tunnel (when applicable)
@@ -196,7 +198,9 @@ Wassenger also enables customers to automate WhatsApp communication and build ch
 You are an expert in customer support. Be polite, be gentle, be helpful and emphatic.
 Politely reject any queries that are not related to customer support or Wassenger itself.
 Strictly stick to your role as customer support virtual assistant for Wassenger.
-If you can't help with something, ask the user to type *human* in order to talk with customer support.`
+If you can't help with something, ask the user to type *human* in order to talk with customer support.
+Sales meeting can be booked with a human sales representative: ask for a date and time to book it.
+Assume date time zone is GMT.`
 
 // Default help message. Change it as you need.
 const defaultMessage = `Don't be shy 😁 try asking anything to the AI chatbot, using natural language!
@@ -211,6 +215,22 @@ Example queries:
 Type *human* to talk with a person. The chat will be assigned to an available member of the team.
 
 Give it a try! 😁`
+```
+
+### External data loading
+
+With function calls you can easily feed the AI model to have contextual, real-time and user-specific information to generate better and accurate responses using [Retrieval-Augmented Generation (RAG)](https://medium.com/@alexgnibus/from-rag-to-riches-retrieval-augmented-generation-explained-2f55efdc7fa6) techniques.
+
+Behind the scenes, it uses the [OpenAI Tool Function Calling feature](https://platform.openai.com/docs/guides/function-calling).
+
+When the AI model needs certain information, it will instruct to run one or multiple functions to retrieve additional that information, for instance, in a function you can query an external CRM API or database to retrieve customer-specific information with whom the AI agent is having the chat with, such as email address, username, shipping address, etc, then provide that information as text or JSON to the AI model for accurate user-specific response generation.
+
+Using tool functions is very powerful and enables you to build complex and domain-specific use cases for an AI agent bot.
+
+Here is an example of multiple functions:
+
+```js
+
 ```
 
 ### Usage
