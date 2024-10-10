@@ -34,7 +34,7 @@ You can also easily augment domain-specific knowledge about your business in rea
 - [Installation](#installation)
 - [Configuration](#configuration)
 - [Customization](#customization)
-- [External data integration (RAG)](#external-data-integrations-rag)
+- [External data integration (RAG)](#external-data-integration-rag)
 - [Usage](#usage)
 - [Questions](#questions)
 
