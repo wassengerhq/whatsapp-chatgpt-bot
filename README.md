@@ -34,7 +34,7 @@ You can also easily augment domain-specific knowledge about your business in rea
 - [Installation](#installation)
 - [Configuration](#configuration)
 - [Customization](#customization)
-- [External data loading](#external-data-loading)
+- [External data integration (RAG)](#external-data-integrations-rag)
 - [Usage](#usage)
 - [Questions](#questions)
 
@@ -217,7 +217,7 @@ Type *human* to talk with a person. The chat will be assigned to an available me
 Give it a try! 😁`
 ```
 
-### External data loading
+### External data integration (RAG)
 
 With function calls you can easily feed the AI model to have contextual, real-time and user-specific information to generate better and accurate responses using [Retrieval-Augmented Generation (RAG)](https://medium.com/@alexgnibus/from-rag-to-riches-retrieval-augmented-generation-explained-2f55efdc7fa6) techniques.
 
