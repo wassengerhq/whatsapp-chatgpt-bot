@@ -1,19 +1,20 @@
 ## WhatsApp ChatGPT-Powered AI Chatbot Tutorial 🤖 🤖
 
-**Turn your WhatsApp number into a ChatGPT-powered AI powerful chatbot in minutes with this tutorial using the [Wassenger API](https://wassenger.com).**
+**Turn your WhatsApp number into a ChatGPT-powered multimodal AI chatbot in minutes with this tutorial using the [Wassenger API](https://wassenger.com).**
 
 [![Open in Codeflow](https://developer.stackblitz.com/img/open_in_codeflow.svg)](https:///pr.new/wassengerhq/whatsapp-chatgpt-bot)
 
-Have a powerful AI chatbot based on GPT-4o running in minutes on your computer or server and easily adjust it to cover you own business use cases.
+Run a customizable versatile text, audio and image WhatsApp-ready AI chatbot based on [GPT-4o](https://openai.com/index/hello-gpt-4o/) in minutes on your computer or server.
+Easily customize it to cover your own business use cases and integrate remote API, database or file data loading (RAG).
 
-By following this tutorial you will be able to have a fully functional ChatGPT-like AI chatbot running in minutes on your computer or cloud server that behaves like a virtual customer support assistant for a specific business purpose.
+By following this tutorial you will be able to have a fully functional ChatGPT multimodal AI chatbot running in minutes on your computer or cloud server that behaves like a virtual customer support assistant for a specific business purpose.
 
 You can [easily customize and instruct the AI](#customization) to adjust its behaviour, role, purpose and knowledge boundaries.
 Also, the AI bot will be conversation-aware based on the previous messages you had with the user on WhatsApp, providing more context-specific accurate responses.
 
-The chatbot will be able to understand and speak many languages and has been trained to behave like a customer support virtual assistant specialized in certain tasks.
+The chatbot will be able to understand text, images and audios, and reply with text and audio in many languages. The AI bot has been trained to behave like a customer support virtual assistant specialized in business-specific cases.
 
-You can also easily augment domain-specific knowledge about your business in real-time [by using function actions](/config.js#L38-L80) that let the AI bot arbitrarily communicate with your code functions or remote APIs to retrieve and feed the AI with custom information.
+You can also easily augment domain-specific knowledge about your business in real-time [by using function actions](/config.js#L38-L80) that let the AI bot to load external data, call remote API, fetch data from a database or files by executing custom code functions to retrieve and feed the AI with augmented conversational context-specific information.
 
 👉 *[Read the blog tutorial here](https://medium.com/@wassenger/build-a-whatsapp-chatgpt-powered-ai-chatbot-for-your-business-595a60eb17da)*
 
@@ -132,8 +133,8 @@ Enter your [Wassenger](https://wassenger.com) API key
 
 ```js
 // Required. Specify the Wassenger API key to be used
-// You can obtain it here: https://app.wassenger.com/apikeys
-apiKey: env.API_KEY || 'ENTER API KEY HERE',
+// You can obtain it here: https://app.wassenger.com/developers/apikeys
+const apiKey = env.API_KEY || 'ENTER API KEY HERE'
 ```
 
 #### Set your OpenAI API key
@@ -145,7 +146,7 @@ Enter your [OpenAI](https://openai.com) API key
 // Required. Specify the OpenAI API key to be used
 // You can sign up for free here: https://platform.openai.com/signup
 // Obtain your API key here: https://platform.openai.com/account/api-keys
-openaiKey: env.OPENAI_API_KEY || 'ENTER OPENAI API KEY HERE',
+const openaiKey = env.OPENAI_API_KEY || ''
 ```
 
 > **Important**: in order to use OpenAI API, [you may be required to add prepaid credits](https://help.openai.com/en/articles/8264644-what-is-prepaid-billing) in your OpenAI account due to the new payment policy.
@@ -159,10 +160,10 @@ Then set the token in the line 90th:
 
 ```js
 // Ngrok tunnel authentication token.
-// Required if webhook URL is not provided.
+// Required if webhook URL is not provided or running the program from your computer.
 // sign up for free and get one: https://ngrok.com/signup
 // Learn how to obtain the auth token: https://ngrok.com/docs/agent/#authtokens
-ngrokToken: env.NGROK_TOKEN || 'ENTER NGROK TOKEN HERE',
+const ngrokToken = env.NGROK_TOKEN || 'ENTER NGROK TOKEN HERE',
 ```
 
 > If you run the program in a cloud server that is publicly accesible from the Internet, you don't need to use Ngrok. Instead, set your server URL in `config.js` > `webhookUrl` field.
@@ -215,6 +216,78 @@ Example queries:
 Type *human* to talk with a person. The chat will be assigned to an available member of the team.
 
 Give it a try! 😁`
+
+// Template messages to be used by the chatbot on specific scenarios. Customize as needed.
+const templateMessages = {
+  // When the user sends an audio message that is not supported or transcription failed
+  noAudioAccepted: 'Audio messages are not supported: gently ask the user to send text messages only.',
+  // Chat assigned to a human agent
+  chatAssigned: 'You will be contact shortly by someone from our team. Thank you for your patience.'
+}
+```
+
+#### Chatbot features
+
+Enable or disable chatbot features, such as accepting audio/image inputs, or the ability to generate audio responses.
+
+For example, if you want the AI bot to always reply with audio messages, set both `audioOutput` and `audioOnly` to `true`.
+
+```js
+// Chatbot features. Edit as needed.
+const features = {
+  // Enable or disable text input processing
+  audioInput: true,
+  // Enable or disable audio voice responses.
+  // By default the bot will only reply with an audio messages if the user sends an audio message first.
+  audioOutput: true,
+  // Reply only using audio voice messages instead of text.
+  // Requires "features.audioOutput" to be true.
+  audioOnly: false,
+  // Audio voice to use for the bot responses. Requires "features.audioOutput" to be true.
+  // Options: 'alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer'
+  // More info: https://platform.openai.com/docs/guides/text-to-speech
+  voice: 'echo',
+  // Audio voice speed from 0.25 to 2. Requires "features.audioOutput" to be true.
+  voiceSpeed: 1,
+  // Enable or disable image input processing
+  // Note: image processing can significnantly increase the AI token processing costs compared to text
+  imageInput: true
+}
+```
+
+#### Chatbot limits
+
+Customize the chatbot usage limits, max tokens per resposne, max messages per chat, max audio duration, etc.
+
+```js
+const limits = {
+  // Required. Maximum number of characters from user inbound messages to be procesed.
+  // Exceeding characters will be ignored.
+  maxInputCharacters: 1000,
+  // Required: maximum number of tokens to generate in AI responses.
+  // The number of tokens is the length of the response text.
+  // Tokens represent the smallest unit of text the model can process and generate.
+  // AI model cost is primarely based on the input/output tokens.
+  // Learn more about tokens: https://platform.openai.com/docs/concepts#tokens
+  maxOutputTokens: 1000,
+  // Required. Maximum number of messages to store in cache per user chat.
+  // A higher number means higher OpenAI costs but more accurate responses thanks to more conversational context.
+  // The recommendation is to keep it between 10 and 20.
+  chatHistoryLimit: 20,
+  // Required. Maximum number of messages that the bot can reply on a single chat.
+  // This is useful to prevent abuse from users sending too many messages.
+  // If the limit is reached, the chat will be automatically assigned to an agent
+  // and the metadata key will be addded to the chat contact: "bot:chatgpt:status" = "too_many_messages"
+  maxMessagesPerChat: 500,
+  // Maximum number of messages per chat counter time window to restart the counter in seconds.
+  maxMessagesPerChatCounterTime: 24 * 60 * 60,
+  // Maximum input audio duration in seconds: default to 2 minutes
+  // If the audio duration exceeds this limit, the message will be ignored.
+  maxAudioDuration: 2 * 60,
+  // Maximum image size in bytes: default to 2 MB
+  // If the image size exceeds this limit, the message will be ignored.
+  maxImageSize: 2 * 1024 * 1024
+}
 ```
 
 ### External data loading
@@ -389,6 +462,18 @@ WEBHOOK_URL=https://bot.company.com:8080/webhook node main
 Yes! You can provide customized instructions to the AI to determine the bot behavior, identity and more.
 
 To set your instructions, enter the text in `config.js` > `botInstructions`.
+
+#### Can the chatbot process images and audio?
+
+Yes, the chatbot is natively multimodal, meaning it can accept not only text, but also image and audio inputs.
+
+To enable multimodal capabilities, make sure `features.audioInput` and `features.imageInput` are enabled in `config.js`.
+
+#### Can the chatbot reply with audio?
+
+Yes, the chatbot can not only understand audio input messages, but it can also reply with audio messages as well.
+
+To enable audio responses, make sure `features.audioOutput` is enabled in `config.js`.
 
 #### The program returns an OpenAI error: what should I do?
 

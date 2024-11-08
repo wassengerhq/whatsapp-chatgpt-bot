@@ -1,3 +1,4 @@
+import fs from 'fs'
 import ngrok from 'ngrok'
 import nodemon from 'nodemon'
 import config from './config.js'
@@ -21,9 +22,10 @@ async function createTunnel () {
       const tunnel = await ngrok.connect({
         addr: config.port,
         authtoken: config.ngrokToken,
-        path: () => config.ngrokPath || path
+        path: () => config.ngrokPath
       })
       console.log(`Ngrok tunnel created: ${tunnel}`)
+      config.webhookUrl = tunnel
       return tunnel
     } catch (err) {
       console.error('[error] Failed to create Ngrok tunnel:', err.message)
@@ -43,7 +45,7 @@ async function devServer () {
     script: 'bot.js',
     ext: 'js',
     watch: ['*.js', 'src/**/*.js'],
-    exec: `WEBHOOK_URL=${tunnel} DEV=false npm run start`,
+    exec: `WEBHOOK_URL=${tunnel} DEV=false npm run start`
   }).on('restart', () => {
     console.log('[info] Restarting bot after changes...')
   }).on('quit', () => {
@@ -97,6 +99,11 @@ async function main () {
   }
   if (device.billing.subscription.product !== 'io') {
     return exit(`WhatsApp number plan (${device.alias}) does not support inbound messages. Please upgrade the plan here:\nhttps://app.wassenger.com/${device.id}/plan?product=io`)
+  }
+
+  // Create tmp folder
+  if (!fs.existsSync(config.tempPath)) {
+    fs.mkdirSync(config.tempPath)
   }
 
   // Pre-load device labels and team mebers

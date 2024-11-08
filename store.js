@@ -7,3 +7,6 @@ export const cache = {}
 // In-memory store for a simple state machine per chat
 // You can use a database instead for persistence
 export const state = {}
+
+// In-memory store for message counter per chat
+export const stats = {}

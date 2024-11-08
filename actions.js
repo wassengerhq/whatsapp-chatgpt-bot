@@ -1,9 +1,14 @@
+import fs from 'fs'
 import axios from 'axios'
+import OpenAI from 'openai'
 import config from './config.js'
 import { state, cache, cacheTTL } from './store.js'
 
+// Initialize OpenAI client
+const ai = new OpenAI({ apiKey: config.openaiKey })
+
 // Base URL API endpoint. Do not edit!
-const API_URL = process.env.API_URL || 'https://api.wassenger.com/v1'
+const API_URL = config.apiBaseUrl
 
 // Function to send a message using the Wassenger API
 export async function sendMessage ({ phone, message, media, device, ...fields }) {
@@ -46,7 +51,7 @@ export async function pullMembers (device) {
 export async function validateMembers (device, members) {
   const validateMembers = (config.teamWhitelist || []).concat(config.teamBlacklist || [])
   for (const id of validateMembers) {
-    if (typeof id !== 'string' || string.length !== 24) {
+    if (typeof id !== 'string' || id.length !== 24) {
       return exit('Team user ID in config.teamWhitelist and config.teamBlacklist must be a 24 characters hexadecimal value:', id)
     }
     const exists = members.some(user => user.id === id)
@@ -115,7 +120,7 @@ export async function updateChatMetadata ({ data, device, metadata }) {
   const contactMetadata = data.chat.contact.metadata
   for (const entry of metadata) {
     if (entry && entry.key && entry.value) {
-      const value = typeof entry.value === 'function' ? entry.value() : value
+      const value = typeof entry.value === 'function' ? entry.value() : entry.value
       if (!entry.key || !value || typeof entry.key !== 'string' || typeof value !== 'string') {
         continue
       }
@@ -172,8 +177,8 @@ async function assignChat ({ member, data, device }) {
   }
 }
 
-export async function assignChatToAgent ({ data, device }) {
-  if (!config.enableMemberChatAssignment) {
+export async function assignChatToAgent ({ data, device, force }) {
+  if (!config.enableMemberChatAssignment && !force) {
     return console.log('[debug] Unable to assign chat: member chat assignment is disabled. Enable it in config.enableMemberChatAssignment = true')
   }
   try {
@@ -197,7 +202,7 @@ export async function assignChatToAgent ({ data, device }) {
           labels = labels.filter(label => !updateLabels.includes(label))
         }
         for (const label of config.setLabelsOnUserAssignment) {
-          if (!updateLabels.includes(label)) {
+          if (!labels.includes(label)) {
             updateLabels.push(label)
           }
         }
@@ -221,7 +226,7 @@ export async function assignChatToAgent ({ data, device }) {
 
 export async function pullChatMessages ({ data, device }) {
   try {
-    const url = `${API_URL}/chat/${device.id}/messages/?chat=${data.chat.id}&limit=20`
+    const url = `${API_URL}/chat/${device.id}/messages/?chat=${data.chat.id}&limit=25`
     const res = await axios.get(url, { headers: { Authorization: config.apiKey } })
     state[data.chat.id] = res.data.reduce((acc, message) => {
       acc[message.id] = message
@@ -296,8 +301,43 @@ export async function registerWebhook (tunnel, device) {
   return webhook
 }
 
+export async function transcribeAudio ({ message, device }) {
+  if (!message?.media?.id) {
+    return false
+  }
+
+  try {
+    const url = `${API_URL}/chat/${device.id}/files/${message.media.id}/download`
+    const response = await axios.get(url, {
+      headers: { Authorization: config.apiKey },
+      responseType: 'stream'
+    })
+    if (response.status !== 200) {
+      return false
+    }
+
+    const tmpFile = `${message.media.id}.mp3`
+    await new Promise((resolve, reject) => {
+      const writer = fs.createWriteStream(tmpFile)
+      response.data.pipe(writer)
+      writer.on('finish', () => resolve())
+      writer.on('error', reject)
+    })
+
+    const transcription = await ai.audio.transcriptions.create({
+      file: fs.createReadStream(tmpFile),
+      model: 'whisper-1',
+      response_format: 'text'
+    })
+    await fs.promises.unlink(tmpFile)
+    return transcription
+  } catch (err) {
+    console.error('[error] failed to transcribe audio:', message.fromNumber, message.media.id, err.message)
+    return false
+  }
+}
+
 export function exit (msg, ...args) {
   console.error('[error]', msg, ...args)
   process.exit(1)
 }
-

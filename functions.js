@@ -39,7 +39,7 @@ const functions = [
         'https://wassenger.com/#pricing'
       ].join('\n')
       return reply
-    },
+    }
   },
 
   // Sample function to load user information from a CRM
@@ -57,8 +57,8 @@ const functions = [
     }
   },
 
-   // Sample function to verify the current date and time
-   {
+  // Sample function to verify the current date and time
+  {
     name: 'verifyMeetingAvaiability',
     description: 'Verify if a given date and time is available for a meeting before booking it',
     parameters: {
