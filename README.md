@@ -1,4 +1,4 @@
-## WhatsApp ChatGPT-Powered AI Chatbot Tutorial 🤖 🤖
+## WhatsApp ChatGPT-powered Multimodal AI Chatbot 🤖 🤖
 
 **Turn your WhatsApp number into a ChatGPT-powered multimodal AI chatbot in minutes with this tutorial using the [Wassenger API](https://wassenger.com).**
 
