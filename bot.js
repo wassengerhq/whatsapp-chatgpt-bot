@@ -78,6 +78,10 @@ function replyMessage ({ data, device, useAudio }) {
     // If audio mode, create a new voice message
     let fileId = null
     if (config.features.audioOutput && !text && message.length <= 4096 && (useAudio || config.features.audioOnly)) {
+      // Send recording audio chat state in background
+      actions.sendTypingState({ data, device, action: 'recording' })
+
+      // Generate audio recording
       console.log('[info] generating audio response for chat:', data.fromNumber, message)
       const audio = await ai.audio.speech.create({
         input: message,
@@ -94,6 +98,9 @@ function replyMessage ({ data, device, useAudio }) {
       const filepath = path.join(`${config.tempPath}`, `${fileId}.mp3`)
       const buffer = Buffer.from(await audio.arrayBuffer())
       await fs.writeFile(filepath, buffer)
+    } else {
+      // Send text typing chat state in background
+      actions.sendTypingState({ data, device, action: 'typing' })
     }
 
     const payload = {
@@ -198,7 +205,7 @@ async function updateChatOnMessagesQuota ({ data, device }) {
 }
 
 // Process message received from the user on every new inbound webhook event
-export async function processMessage ({ data, device } = {}) {
+export async function processMessage ({ data, device } = {}, { rag } = {}) {
   // Can reply to this message?
   if (!canReply({ data, device })) {
     return console.log('[info] Skip message - chat is not eligible to reply due to active filters:', data.fromNumber, data.date, data.body)
@@ -263,12 +270,6 @@ export async function processMessage ({ data, device } = {}) {
   // User message input
   const body = data?.body?.trim().slice(0, Math.min(config.limits.maxInputCharacters, 10000))
   console.log('[info] New inbound message received:', chat.id, data.type, body || '<empty message>')
-
-  // First inbound message, reply with a welcome message
-  // if (!data.chat.lastOutboundMessageAt || data.meta.isFirstMessage) {
-  //   const message = `${config.welcomeMessage}\n\n${config.defaultMessage}}`
-  //   return await reply({ message })
-  // }
 
   // If input message is audio, reply with an audio message, unless features.audioOutput is false
   const useAudio = data.type === 'audio'
@@ -357,6 +358,16 @@ export async function processMessage ({ data, device } = {}) {
   const tools = (config.functions || []).filter(x => x && x.name).map(({ name, description, parameters, strict }) => (
     { type: 'function', function: { name, description, parameters, strict } }
   ))
+
+  // If knowledge is enabled, query it
+  if (rag && body && (data.type === 'text' || data.type === 'audio')) {
+    const result = await rag.query(body)
+    // const result = await rag.search(body)
+    console.log('==> rag result:', result?.content)
+    if (result?.content) {
+      messages.push({ role: 'assistant', content: result.content })
+    }
+  }
 
   // Generate response using AI
   let completion = await ai.chat.completions.create({

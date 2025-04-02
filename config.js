@@ -1,10 +1,8 @@
 import functions from './functions.js'
 const { env } = process
 
-//
 // CONFIGURATION
-// Set your API keys and edit the configuration as needed for your use case.
-//
+// Set your API keys and edit the configuration as needed for your business use case.
 
 // Required. Specify the Wassenger API key to be used
 // You can obtain it here: https://app.wassenger.com/developers/apikeys
@@ -29,7 +27,7 @@ const openaiModel = env.OPENAI_MODEL || 'gpt-4o'
 const ngrokToken = env.NGROK_TOKEN || ''
 
 // Default message when the user sends an unknown message.
-const unknownCommandMessage = `I'm sorry, I can only understand text. Can you please describe your query?
+const unknownCommandMessage = `I'm sorry, I was unable to understand your message. Can you please elaborate more?
 
 If you would like to chat with a human, just reply with *human*.`
 
@@ -39,7 +37,7 @@ const welcomeMessage = 'Hey there 👋 Welcome to this ChatGPT-powered AI chatbo
 // AI bot instructions to adjust its bevarior. Change it as you need.
 // Use concise and clear instructions.
 const botInstructions = `You are a smart virtual customer support assistant who works for Wassenger.
-You can identify yourself as Molly, the Wassenger AI Assistant.
+You can identify yourself as Milo, the Wassenger AI Assistant.
 You will be chatting with random customers who may contact you with general queries about the product.
 Wassenger is a cloud solution that offers WhatsApp API and multi-user live communication services designed for businesses and developers.
 Wassenger also enables customers to automate WhatsApp communication and build chatbots.
@@ -123,16 +121,6 @@ const limits = {
   maxImageSize: 2 * 1024 * 1024
 }
 
-// TODO: knowledge files are not yet supported
-// Knowledge files to be used for the AI model contextual data augmentation at processing time.
-// Files should be stored in the `files/*` folder.
-// Supported file formats and extentions: pdf, docx, txt, html, md
-const knowledge = [
-  { id: 'faq', path: 'faq.pdf' },
-  { id: 'webhooks', path: 'webhooks.pdf' },
-  { id: 'pricing', path: 'pricing.html' }
-]
-
 // Chatbot config
 export default {
   // Required. Wassenger API key to be used. See the `apiKey` declaration above.
@@ -171,9 +159,6 @@ export default {
 
   // Template message responses
   templateMessages,
-
-  // Knowledge files to be used for the AI model training. See knowledge declaration above
-  knowledge,
 
   // Optional. HTTP server TCP port to be used. Defaults to 8080
   port: +env.PORT || 8080,
@@ -276,3 +261,6 @@ export default {
   // Do not change: specifies the base URL for the Wassenger API
   apiBaseUrl: env.API_URL || 'https://api.wassenger.com/v1'
 }
+
+// Disable LanceDB logs: comment line to enable logs
+env.LANCEDB_LOG = 0

@@ -151,5 +151,5 @@ async function main () {
 }
 
 main().catch(err => {
-  exit('Failed to start chatbot server:', err.message)
+  exit('Failed to start chatbot server:', err)
 })

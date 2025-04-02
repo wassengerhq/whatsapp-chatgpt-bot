@@ -337,6 +337,16 @@ export async function transcribeAudio ({ message, device }) {
   }
 }
 
+export async function sendTypingState ({ data, device, action }) {
+  const url = `${API_URL}/chat/${device.id}/typing`
+  const body = { action: action || 'typing', duration: 10, chat: data.fromNumber }
+  try {
+    await axios.post(url, body, { headers: { Authorization: config.apiKey } })
+  } catch (err) {
+    console.error('[error] failed to send typing state:', data.fromNumber, body, err.message)
+  }
+}
+
 export function exit (msg, ...args) {
   console.error('[error]', msg, ...args)
   process.exit(1)
