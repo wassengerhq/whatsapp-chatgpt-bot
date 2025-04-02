@@ -205,7 +205,7 @@ async function updateChatOnMessagesQuota ({ data, device }) {
 }
 
 // Process message received from the user on every new inbound webhook event
-export async function processMessage ({ data, device } = {}, { rag } = {}) {
+export async function processMessage ({ data, device } = {}) {
   // Can reply to this message?
   if (!canReply({ data, device })) {
     return console.log('[info] Skip message - chat is not eligible to reply due to active filters:', data.fromNumber, data.date, data.body)
@@ -358,16 +358,6 @@ export async function processMessage ({ data, device } = {}, { rag } = {}) {
   const tools = (config.functions || []).filter(x => x && x.name).map(({ name, description, parameters, strict }) => (
     { type: 'function', function: { name, description, parameters, strict } }
   ))
-
-  // If knowledge is enabled, query it
-  if (rag && body && (data.type === 'text' || data.type === 'audio')) {
-    const result = await rag.query(body)
-    // const result = await rag.search(body)
-    console.log('==> rag result:', result?.content)
-    if (result?.content) {
-      messages.push({ role: 'assistant', content: result.content })
-    }
-  }
 
   // Generate response using AI
   let completion = await ai.chat.completions.create({

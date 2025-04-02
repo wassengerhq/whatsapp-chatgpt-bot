@@ -500,7 +500,7 @@ You can easily deploy this WhatsApp ChatGPT bot to various cloud providers. Here
   - `WEBHOOK_URL`: The URL of your Render service + "/webhook" (e.g., https://your-chatgpt-bot.onrender.com/webhook)
 6. Click "Create Web Service"
 
-### Railway
+#### Railway
 
 1. Create a [Railway account](https://railway.app/)
 2. Install the Railway CLI or use the web interface
@@ -511,7 +511,7 @@ You can easily deploy this WhatsApp ChatGPT bot to various cloud providers. Here
   - `WEBHOOK_URL`: Your Railway service URL + "/webhook"
 5. Railway will automatically deploy your application when you push changes
 
-### Fly.io
+#### Fly.io
 
 1. [Create a Fly.io account](https://fly.io/app/sign-up)
 2. Install the Flyctl CLI:
@@ -536,7 +536,7 @@ You can easily deploy this WhatsApp ChatGPT bot to various cloud providers. Here
 
 For all deployments, after successfully deploying, make sure to:
 
-1. Test the webhook endpoint is accessible
+1. Test the webhook endpoint is accessible via public URL
 2. Verify the bot is correctly responding to WhatsApp messages
 3. Monitor logs for any potential errors or issues
 

@@ -49,7 +49,7 @@ app.post('/webhook', (req, res) => {
   res.send({ ok: true })
 
   // Process message response in background
-  bot.processMessage(body, { rag: app.rag }).catch(err => {
+  bot.processMessage(body).catch(err => {
     console.error('[error] failed to process inbound message:', body.id, body.data.fromNumber, body.data.body, err)
   })
 })
