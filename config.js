@@ -18,7 +18,7 @@ const openaiKey = env.OPENAI_API_KEY || ''
 // Fastest and cheapest: gpt-4o-mini
 // Recommended: gpt-4o
 // List of available models: https://platform.openai.com/docs/models
-const openaiModel = env.OPENAI_MODEL || 'gpt-4o'
+const openaiModel = env.OPENAI_MODEL || 'gpt-5-mini'
 
 // Ngrok tunnel authentication token.
 // Required if webhook URL is not provided or running the program from your computer.

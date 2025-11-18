@@ -4,7 +4,7 @@
 
 [![Open in Codeflow](https://developer.stackblitz.com/img/open_in_codeflow.svg)](https:///pr.new/wassengerhq/whatsapp-chatgpt-bot)
 
-Run a customizable versatile text, audio and image WhatsApp-ready AI chatbot based on [GPT-4o](https://openai.com/index/hello-gpt-4o/) in minutes on your computer or server.
+Run a customizable versatile text, audio and image WhatsApp-ready AI chatbot based on [GPT-5](https://openai.com/es-ES/index/introducing-gpt-5/) in minutes on your computer or server.
 Easily customize it to cover your own business use cases and integrate remote API, database or file data loading (RAG).
 
 By following this tutorial you will be able to have a fully functional ChatGPT multimodal AI chatbot running in minutes on your computer or cloud server that behaves like a virtual customer support assistant for a specific business purpose.
@@ -16,7 +16,7 @@ The chatbot will be able to understand text, images and audios, and reply with t
 
 You can also easily augment domain-specific knowledge about your business in real-time [by using function actions](/config.js#L38-L80) that let the AI bot to load external data, call remote API, fetch data from a database or files by executing custom code functions to retrieve and feed the AI with augmented conversational context-specific information.
 
-👉 *[Read the blog tutorial here](https://medium.com/@wassenger/build-a-whatsapp-chatgpt-powered-ai-chatbot-for-your-business-595a60eb17da)*
+👉 *[Read the blog tutorial here](https://wassenger.com/blog/en/build-a-whatsapp-chatgpt-powered-ai-chatbot-for-your-business)*
 
 👉 *[Watch the video tutorial here](https://www.youtube.com/watch?v=v6hi4TlYnbw)* 🤩 ▶️
 
@@ -46,7 +46,7 @@ You can also easily augment domain-specific knowledge about your business in rea
 
 ### Demo
 
-![demo](https://miro.medium.com/v2/resize:fit:2000/format:webp/1*p-noYzcPwiaX4w8wYzJCyQ.jpeg)
+![demo](https://wassenger.com/images/blog/build-a-whatsapp-chatgpt-powered-ai-chatbo-02.jpeg)
 
 ### How it works
 
